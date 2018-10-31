@@ -5,7 +5,9 @@ TODO: Secure API with Azure Active Directory
 
 ## Create Angular project with Visual Studio Code
 
-How to create new Angular project - [Using Angular in Visual Studio Code](https://code.visualstudio.com/docs/nodejs/angular-tutorial)
+How to create new Angular project (with routing) - [Using Angular in Visual Studio Code](https://code.visualstudio.com/docs/nodejs/angular-tutorial)
+Tutorial for Angular - [Angular Tutorial](https://angular.io/tutorial/toh-pt0)
+Use Material Design - [Angular Material](https://material.angular.io/guide/getting-started)
 
 Run web on localhost
 
