@@ -23,8 +23,20 @@ ng serve --open
 ## Create API project with Visual Studio
 
 I created DotNet Core API project jjapi and published to Azure API App.
-API URL: https://jjapiapp.azurewebsites.net/api/books
 
-Update CORS url on WebApp based on your web client jjweb, like http://localhost:4200
+How to add Swagger - [NSwag](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag?view=aspnetcore-2.1&tabs=visual-studio%2Cvisual-studio-xml)
 
-Update SPA project with this url, file main.ts
+Configure Azure API App
+
+1. Swagger link must be updated on API App - API Definition blade - type https://jjapiapp.azurewebsites.net/swagger/v1/swagger.json
+2. You will get this API URL: https://jjapiapp.azurewebsites.net/api/books
+3. Update CORS url on WebApp based on your web client jjweb, like http://localhost:4200
+4. Update SPA project with this url, file main.ts
+
+## Publish API with Azure API management
+
+Open API Management service add new API (one of them)
+
+1. Open API specification - type https://jjapiapp.azurewebsites.net/swagger/v1/swagger.json
+2. Open API App - select API App Azure resource
+3. Update SPA project with this url, file main.ts
