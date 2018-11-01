@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 import {Book} from '../book';
 import {BOOKS} from '../mock-books';
@@ -9,10 +10,17 @@ import {BOOKS} from '../mock-books';
   styleUrls: ['./books.component.css']
 })
 export class BooksComponent implements OnInit { 
-  books = BOOKS;
+  //books = BOOKS;
+  books: Book[];
   selectedBook: Book;
 
-  constructor() { }
+  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    http.get<Book[]>(baseUrl + 'api/books').subscribe(result => {
+      this.books = result;
+      console.log("retrieved" + this.books);
+      console.log("title: " + this.books[0].name);
+    }, error => console.error(error));
+  }
 
   ngOnInit() {
   }
