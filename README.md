@@ -4,8 +4,8 @@ SinglePage Angular web application calling back-end rest API published with API 
 
 TODO:
 
-- Multiple API services (now only Books)
-- Secure API with Azure Active Directory
+- Multiple API services (now only Books) - check https://github.com/jjindrich/jjazure-web-angular-apimanagement/pull/1
+- Host API in Docker using Azure Mesh
 
 Design for development
 
@@ -21,7 +21,8 @@ Design for production
 
 If you will not use API management, you have to implement security checks on your API services directly.
 
-[Protect your API](https://docs.microsoft.com/en-us/azure/api-management/transform-api)
+- [Protect your API](https://docs.microsoft.com/en-us/azure/api-management/transform-api)
+- [Combine with Azure Application Gateway](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway)
 
 ## Create frontend web
 
@@ -111,10 +112,12 @@ Your service will be available on http://jjsf.westeurope.cloudapp.azure.com/api/
 
 ## Publish API backend with Azure API management
 
-Provision Azure API Management
+Provision Azure API Management, my is jjapi
 
 - Developer plan is limited, you cannot connect to virtual network for backend services
 - Premium plan is production ready, you can connect to virtual network for backend services
+
+### Publish Books API with Azure API management
 
 Open API Management service add new API (one of them)
 
@@ -125,6 +128,15 @@ Open API Management service add new API (one of them)
 5. Check API settings for URL scheme to HTTPs or Both
 6. Update SPA project with this url, file main.ts - type https://jjapi.azure-api.net/books/api/books
 
-![API management Books API](media/api-books-design.png) 
+![API management Books API](media/api-books-design.png)
 
-![API management Books API](media/api-books-settings.png) 
+![API management Books API](media/api-books-settings.png)
+
+### Secure Books API with Azure Active Directory
+
+[Protect API with Azure AD](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
+
+Configuration of API management
+
+1. Create Application registration in your Azure Active Directory, type jjapi
+2. TODO
