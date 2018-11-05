@@ -4,9 +4,8 @@ SinglePage Angular web application calling back-end rest API published with API 
 
 TODO:
 
-1. Publish API services using API management on HTTPS only
-2. Multiple API services (now only Books)
-3. Secure API with Azure Active Directory
+- Multiple API services (now only Books)
+- Secure API with Azure Active Directory
 
 Design for development
 
@@ -90,4 +89,10 @@ Open API Management service add new API (one of them)
 2. Open API App - select API App Azure resource with configured API definition
 3. Create new plan Free (for testing) - will not require subscription
 4. Setup policy for CORS - click Add policy CORS for Inbound processing or [CORS](https://docs.microsoft.com/en-us/azure/api-management/api-management-cross-domain-policies)
-5. Update SPA project with this url, file main.ts - type http://jjapi.azure-api.net/books/api/books
+5. Check API settings for URL scheme to HTTPs or Both
+6. Update SPA project with this url, file main.ts - type https://jjapi.azure-api.net/books/api/books
+
+![API management Books API](media/api-books-design.png) 
+
+![API management Books API](media/api-books-settings.png) 
+
