@@ -4,8 +4,9 @@ SinglePage Angular web application calling back-end rest API published with API 
 
 TODO:
 
-1. Secure API with Azure Active Directory
+1. Publish API services using API management on HTTPS only
 2. Multiple API services (now only Books)
+3. Secure API with Azure Active Directory
 
 Design for development
 
@@ -20,6 +21,8 @@ Design for production
  Why use Azure API management - [Direct communication vs API management](https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/architect-microservice-container-applications/direct-client-to-microservice-communication-versus-the-api-gateway-pattern)
 
 If you will not use API management, you have to implement security checks on your API services directly.
+
+[Protect your API](https://docs.microsoft.com/en-us/azure/api-management/transform-api)
 
 ## Create Angular project with Visual Studio Code
 
@@ -85,4 +88,6 @@ Open API Management service add new API (one of them)
 
 1. Open API specification (for ServiceFabric deployment) - type http://jjsf.westeurope.cloudapp.azure.com/swagger/v1/swagger.json
 2. Open API App - select API App Azure resource with configured API definition
-3. Update SPA project with this url, file main.ts
+3. Create new plan Free (for testing) - will not require subscription
+4. Setup policy for CORS - click Add policy CORS for Inbound processing or [CORS](https://docs.microsoft.com/en-us/azure/api-management/api-management-cross-domain-policies)
+5. Update SPA project with this url, file main.ts - type http://jjapi.azure-api.net/books/api/books

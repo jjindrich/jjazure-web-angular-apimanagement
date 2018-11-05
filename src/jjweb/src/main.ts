@@ -5,7 +5,8 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 const providers = [
-  { provide: 'BASE_URL', useValue: 'https://jjapiapp.azurewebsites.net/', deps: [] }
+  //{ provide: 'BASE_URL', useValue: 'https://jjapiapp.azurewebsites.net/', deps: [] }
+  { provide: 'BASE_URL', useValue: 'http://jjapi.azure-api.net/books/', deps: [] }
 ];
 
 if (environment.production) {
