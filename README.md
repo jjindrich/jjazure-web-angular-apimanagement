@@ -2,27 +2,27 @@
 
 SinglePage Angular web application calling back-end rest API published with API management. Backend API is secured using bearer tokens from Azure Active Directory .
 
-TODO:
+**TODO**:
 
 - Multiple API services (now only Books) - check https://github.com/jjindrich/jjazure-web-angular-apimanagement/pull/1
 - Host API in Docker using Azure Mesh
 
-Design for development
+**Design for development**
 
 - all API services will be published with public IP
 - API services publish with Azure API Management
 
-Design for production
+**Design for production**
 
 - all API services are deployed into virtual network
 - API services publish with Azure API Management connected to virtual network
 
  Why use Azure API management - [Direct communication vs API management](https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/architect-microservice-container-applications/direct-client-to-microservice-communication-versus-the-api-gateway-pattern)
 
-If you will not use API management, you have to implement security checks on your API services directly.
-
 - [Protect your API](https://docs.microsoft.com/en-us/azure/api-management/transform-api)
 - [Combine with Azure Application Gateway](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway)
+
+*If you will not use API management, you have to implement security checks on your API services directly.*
 
 ## Create frontend web
 
