@@ -71,6 +71,8 @@ cd jjweb
 ng serve --ssl --open
 ```
 
+Open browser and check JWT token after successful sign-in. Decode token with [jwt.io](https://jwt.io/).
+
 ## Create API backend
 
 I prepared two options how to create API backend
@@ -126,4 +128,3 @@ Open API Management service add new API (one of them)
 ![API management Books API](media/api-books-design.png) 
 
 ![API management Books API](media/api-books-settings.png) 
-
