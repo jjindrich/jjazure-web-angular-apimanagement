@@ -3,7 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  config: {
+    tenant: 'jjdev.onmicrosoft.com',
+    clientId: 'e1bb9975-c60b-43e1-8d14-00b8fad78029',
+    endpoints: {
+      'https://graph.microsoft.com': '00000003-0000-0000-c000-000000000000'
+    }
+  }
 };
 
 /*

@@ -1,6 +1,6 @@
 # JJ AngularWeb using Angular calling back-end API with Azure API management
 
-SinglePage Angular web application calling back-end rest API published with API management.
+SinglePage Angular web application calling back-end rest API published with API management. Backend API is secured using bearer tokens from Azure Active Directory .
 
 TODO:
 
@@ -23,7 +23,9 @@ If you will not use API management, you have to implement security checks on you
 
 [Protect your API](https://docs.microsoft.com/en-us/azure/api-management/transform-api)
 
-## Create Angular project with Visual Studio Code
+## Create frontend web
+
+### Create Angular project with Visual Studio Code
 
 I created SinglePage Angular (SPA) web project
 
@@ -33,11 +35,40 @@ Tutorial for Angular - [Angular Tutorial](https://angular.io/tutorial/toh-pt0)
 
 Use Material Design - [Angular Material](https://material.angular.io/guide/getting-started)
 
-Run web on localhost
+Run web on localhost, open browser with http://localhost:4200
 
 ```bash
-cd jjwebclient
+cd jjweb
 ng serve --open
+```
+
+### Add Azure Active Directory to Angular web project
+
+Make sure you have your Azure Active Directory, my is jjdev.onmicrosoft.com
+
+Add Azure Active Directory Sing-in - [Angular use ADAL](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v1-angularjs-spa)
+
+Example for Angular6 - [Adal-Angular6](https://github.com/benbaran/adal-angular6-example)
+
+Steps to configure Azure Active Directory
+
+1. Add App registration - type https://localhost:42000/
+2. Change manifest to oauth2AllowImplicitFlow: true
+3. Grant permissions for application
+
+```bash
+npm install --save adal-angular4
+```
+
+Change source code
+
+1. Change your tenant and clientId in environment settings - yourdomain.onmicrosoft.com and applicationId
+
+Run web on HTTPS localhost (required for claim based auth), open browser with https://localhost:4200
+
+```bash
+cd jjweb
+ng serve --ssl --open
 ```
 
 ## Create API backend
