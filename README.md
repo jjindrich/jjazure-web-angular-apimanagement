@@ -7,12 +7,12 @@ SinglePage Angular web application calling back-end rest API published with API 
 - Multiple API services (now only Books) - check https://github.com/jjindrich/jjazure-web-angular-apimanagement/pull/1
 - Host API in Docker using Azure Mesh
 
-**Design for development**
+**Design for development**:
 
 - all API services will be published with public IP
 - API services publish with Azure API Management
 
-**Design for production**
+**Design for production**:
 
 - all API services are deployed into virtual network
 - API services publish with Azure API Management connected to virtual network
@@ -72,7 +72,17 @@ cd jjweb
 ng serve --ssl --open
 ```
 
-Open browser and check JWT token after successful sign-in. Decode token with [jwt.io](https://jwt.io/).
+Open browser and check JWT (JSON Web Token) token after successful sign-in. Decode token with [jwt.io](https://jwt.io/).
+
+### Use Authorization to call API service
+
+Code is adding Authorization header with JWT token.
+
+```js
+    const httpHeaders = new HttpHeaders()
+      .set('Content-Type', 'application/json')      
+      .set('Authorization', 'Bearer ' + adalService.userInfo.token); 
+```
 
 ## Create API backend
 
@@ -136,7 +146,28 @@ Open API Management service add new API (one of them)
 
 [Protect API with Azure AD](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
 
+[Validate JWT](https://docs.microsoft.com/en-us/azure/api-management/api-management-access-restriction-policies#ValidateJWT)
+
 Configuration of API management
 
-1. Create Application registration in your Azure Active Directory, type jjapi
-2. TODO
+1. Follow instructions to enable OAuth2
+2. Secure API service - enable OAuth2 and setup policy to check JWT token, my service https://jjapi.azure-api.net/BooksSecure/api/Books
+3. Change url in main.ts to access Secured API service
+
+Inbound policy to check JWT - check if using ClientId of Developer Console or jjweb
+
+```xml
+        <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. JJ Access token is missing or invalid.">
+            <openid-config url="https://login.microsoftonline.com/jjdev.onmicrosoft.com/.well-known/openid-configuration" />
+            <required-claims>
+                <claim name="aud" match="any">
+                    <value>01022e81-e7ed-4498-a898-09b16d1c2b7e</value>
+                    <value>e1bb9975-c60b-43e1-8d14-00b8fad78029</value>
+                </claim>
+            </required-claims>
+        </validate-jwt>
+```
+
+You can test it from Developer Console - Authorization value is generated after successful login.
+
+![API management Books Secure API](media/api-bookssecure-design.png)
