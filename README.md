@@ -106,11 +106,19 @@ Configure Azure API App (Web App)
 
 ### Create API project with Visual Studio hosted in Azure ServiceFabric
 
-I created Stateless ASP.Net Core API project jjapisf and published to Azure ServiceFabric jjsf.westeurope.cloudapp.azure.com
+I created Stateless ASP.Net Core API **project jjapisf with API books** and published to Azure ServiceFabric jjsf.westeurope.cloudapp.azure.com
 
 [Hosting ASP.Net Core in ServiceFabric](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-aspnetcore)
 
-Warning: now using Kestrel, limited for multiple services running on same port
+Warning: now using Kestrel, limited for multiple services running on same port.
+
+Next I created **second API service called jjapisf with API orders**
+
+If you want to use port sharing, you have to use HttpSys listener - [Using unique service URLs](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-aspnetcore#using-unique-service-urls)
+
+- add nuget package Microsoft.ServiceFabric.AspNetCore.HttpSys
+- change in code Kestrel to HttpSysCommunicationListener
+- add your url, like jjapisf1
 
 Configure Azure ServiceFabic
 
@@ -119,6 +127,8 @@ Configure Azure ServiceFabic
 3. Publish Visual Studio project jjapisf to Azure ServiceFabric
 
 Your service will be available on http://jjsf.westeurope.cloudapp.azure.com/api/books
+
+How to communicate between services internally in ServiceFabric - [ServiceFabric internal communication](https://dzimchuk.net/implementing-a-rest-client-for-internal-communication-in-service-fabric/)
 
 ## Publish API backend with Azure API management
 
@@ -171,3 +181,37 @@ Inbound policy to check JWT - check if using ClientId of Developer Console or jj
 You can test it from Developer Console - Authorization value is generated after successful login.
 
 ![API management Books Secure API](media/api-bookssecure-design.png)
+
+### Create Mock response service
+
+You can start with creating API service as mock and implement service later.
+
+Options to create mock response
+
+- use [Mock response](https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#mock-response) for just response
+- user [Return response](https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#ReturnResponse) for complete response
+
+Sample for JSON response
+
+```xml
+    <outbound>
+        <base />
+        <return-response>
+            <set-status code="200" reason="OK" />
+            <set-header name="content-type" exists-action="override">
+                <value>application/json; charset=utf-8</value>
+            </set-header>
+            <set-body>[{"id":1,"name":"Book1"},{"id":2,"name":"Book2"},{"id":3,"name":"Book3"}]</set-body>
+        </return-response>
+    </outbound>
+```
+
+### API guides
+
+[Debug API](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-api-inspector)
+
+[Version API](https://docs.microsoft.com/en-us/azure/api-management/api-management-get-started-publish-versions)
+
+## Communication with database
+
+Connection resiliency for Entity Framework core: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency

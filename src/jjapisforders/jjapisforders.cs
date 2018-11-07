@@ -12,14 +12,14 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
 
-namespace jjapisfbooks
+namespace jjapisforders
 {
     /// <summary>
     /// The FabricRuntime creates an instance of this class for each service type instance. 
     /// </summary>
-    internal sealed class jjapisfbooks : StatelessService
+    internal sealed class jjapisforders : StatelessService
     {
-        public jjapisfbooks(StatelessServiceContext context)
+        public jjapisforders(StatelessServiceContext context)
             : base(context)
         { }
 
@@ -30,13 +30,12 @@ namespace jjapisfbooks
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             return new ServiceInstanceListener[]
-            {
+            {                
                 new ServiceInstanceListener(serviceContext =>
                     new HttpSysCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        url += "/jjapisf1";
+                        url += "/jjapisf2";
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting HttpSys on {url}");
-
 
                         return new WebHostBuilder()
                                     //.UseKestrel()

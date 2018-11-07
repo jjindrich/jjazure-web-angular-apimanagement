@@ -11,6 +11,7 @@ namespace jjapisfbooks.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
+        // GET api/books
         [HttpGet]
         public ActionResult<IEnumerable<Book>> Get()
         {
@@ -22,5 +23,11 @@ namespace jjapisfbooks.Controllers
             return retBook;
         }
 
+        // GET api/books/5
+        [HttpGet("{id}")]
+        public ActionResult<string> Get(string id)
+        {
+            return id;
+        }
     }
 }
