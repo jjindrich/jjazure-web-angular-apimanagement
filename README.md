@@ -184,6 +184,36 @@ You can test it from Developer Console - Authorization value is generated after 
 
 ![API management Books Secure API](media/api-bookssecure-design.png)
 
+### Add policy Set Query parameter from JWT token
+
+We don't want parse and validate JWT token on backend API service. From that reason we will parse JWT on API management and send to API backend.
+
+```xml
+        <set-query-parameter name="upn" exists-action="override">
+            <value>@{
+  string retValue = "NOAUTH";
+  string authHeader = context.Request.Headers.GetValueOrDefault("Authorization", "");
+  if (authHeader?.Length > 0)
+  {
+    string[] authHeaderParts = authHeader.Split(' ');
+    if (authHeaderParts?.Length == 2 && authHeaderParts[0].Equals("Bearer", StringComparison.InvariantCultureIgnoreCase))
+    {
+      Jwt jwt;
+      if (authHeaderParts[1].TryParseJwt(out jwt))
+      {
+        retValue = jwt.Claims.GetValueOrDefault("upn", "NOUPN");
+      }
+    }
+    return retValue;
+  }
+  return retValue;}</value>
+        </set-query-parameter>
+```
+
+If you add this policy, you can test in on this service:
+- request with JWT https://jjapi.azure-api.net/BooksSecure/api/Books/1 (e.g. copy token from browser running angular)
+- backend http://jjsf.westeurope.cloudapp.azure.com/jjapisf1/api/Books/1?upn=user@jjdev.onmicrosoft.com
+
 ### Create Mock response service
 
 You can start with creating API service as mock and implement service later.
@@ -211,6 +241,8 @@ Sample for JSON response
 ### API guides
 
 [Debug API](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-api-inspector)
+
+Warning: Trace is not working if Header is missing **Ocp-Apim-Subscription-Key**. Get key from Developer portal from your account.
 
 [Version API](https://docs.microsoft.com/en-us/azure/api-management/api-management-get-started-publish-versions)
 

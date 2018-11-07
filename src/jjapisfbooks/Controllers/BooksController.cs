@@ -23,11 +23,11 @@ namespace jjapisfbooks.Controllers
             return retBook;
         }
 
-        // GET api/books/5
+        // GET api/books/5?upn=user@domain.com
         [HttpGet("{id}")]
-        public ActionResult<string> Get(string id)
+        public ActionResult<string> Get(string id, [FromQuery(Name = "upn")] string upn)
         {
-            return id;
+            return upn;
         }
     }
 }
