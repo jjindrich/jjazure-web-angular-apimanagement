@@ -112,7 +112,7 @@ I created Stateless ASP.Net Core API **project jjapisf with API books** and publ
 
 Warning: now using Kestrel, limited for multiple services running on same port.
 
-Next I created **second API service called jjapisf with API orders**
+Next I created **second API service called jjapisf2 with API orders**
 
 If you want to use port sharing, you have to use HttpSys listener - [Using unique service URLs](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-aspnetcore#using-unique-service-urls)
 
@@ -120,15 +120,17 @@ If you want to use port sharing, you have to use HttpSys listener - [Using uniqu
 - change in code Kestrel to HttpSysCommunicationListener
 - add your url, like jjapisf1
 
-Configure Azure ServiceFabic
+**Configure Azure ServiceFabic**
 
 1. Create with published ports 80, 443
 2. Import PFX/PEM certificate into your user certificate store
 3. Publish Visual Studio project jjapisf to Azure ServiceFabric
 
-Your service will be available on http://jjsf.westeurope.cloudapp.azure.com/api/books
+Your services will be available on http://jjsf.westeurope.cloudapp.azure.com/jjapisf1/api/books and http://jjsf.westeurope.cloudapp.azure.com/jjapisf2/api/values
 
 How to communicate between services internally in ServiceFabric - [ServiceFabric internal communication](https://dzimchuk.net/implementing-a-rest-client-for-internal-communication-in-service-fabric/)
+
+How to generate proxy for APIs [NSwag](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag)
 
 ## Publish API backend with Azure API management
 
@@ -141,7 +143,7 @@ Provision Azure API Management, my is jjapi
 
 Open API Management service add new API (one of them)
 
-1. Open API specification (for ServiceFabric deployment) - type http://jjsf.westeurope.cloudapp.azure.com/swagger/v1/swagger.json
+1. Open API specification (for ServiceFabric deployment) - type http://jjsf.westeurope.cloudapp.azure.com/jjapisf1/api-specification.json
 2. Open API App - select API App Azure resource with configured API definition
 3. Create new plan Free (for testing) - will not require subscription
 4. Setup policy for CORS - click Add policy CORS for Inbound processing or [CORS](https://docs.microsoft.com/en-us/azure/api-management/api-management-cross-domain-policies)

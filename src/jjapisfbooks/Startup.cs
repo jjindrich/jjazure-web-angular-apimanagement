@@ -47,6 +47,8 @@ namespace jjapisfbooks
             {
                 settings.GeneratorSettings.DefaultPropertyNameHandling =
                     PropertyNameHandling.CamelCase;
+                settings.SwaggerUiRoute = "/swagger";
+                settings.SwaggerRoute = "/api-specification.json";
             });
         }
     }
