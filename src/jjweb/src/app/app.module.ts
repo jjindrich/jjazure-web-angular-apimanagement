@@ -13,13 +13,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
 import { AdalService, AdalGuard, AdalInterceptor } from 'adal-angular4';
+import { BooktestComponent } from './booktest/booktest.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksComponent,
     ToolbarComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    BooktestComponent
   ],
   imports: [
     BrowserModule,

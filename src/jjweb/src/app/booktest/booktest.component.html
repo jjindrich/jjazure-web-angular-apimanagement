@@ -1,0 +1,14 @@
+<h2>Book test call</h2>
+<div>    
+    <form class="jj-form" >
+        <mat-form-field class="jj-full-width">          
+          <input matInput [(ngModel)]="bookId" name="bookId" placeholder="Book Id">
+        </mat-form-field>        
+        
+        <mat-form-field class="jj-full-width">          
+            <input matInput [(ngModel)]="resText" name="resText" placeholder="Result" readonly="true">
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="onSubmit(bookId)">Call API</button>    
+      </form>
+</div>
