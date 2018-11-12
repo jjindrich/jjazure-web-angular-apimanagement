@@ -18,7 +18,7 @@ namespace jjapisforders
 {
     public class Startup
     {
-        private DocumentClient cosmosDBclient;
+        private DocumentClient cosmosDBclient = null;
 
         public Startup(IConfiguration configuration)
         {
@@ -28,11 +28,14 @@ namespace jjapisforders
             var dbName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName");
             var collectionName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName");
 
-            // Creating a new client instance
-            cosmosDBclient = new DocumentClient(new Uri(endpointUri), key);
-            // Create any database or collection you will work with here.
-            this.cosmosDBclient.CreateDatabaseIfNotExistsAsync(new Database { Id = dbName });
-            this.cosmosDBclient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(dbName), new DocumentCollection { Id = collectionName });
+            if (endpointUri != "" || endpointUri != null)
+            {
+                // Creating a new client instance
+                cosmosDBclient = new DocumentClient(new Uri(endpointUri), key);
+                // Create any database or collection you will work with here.
+                this.cosmosDBclient.CreateDatabaseIfNotExistsAsync(new Database { Id = dbName });
+                this.cosmosDBclient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(dbName), new DocumentCollection { Id = collectionName });
+            }
         }
 
         public IConfiguration Configuration { get; }

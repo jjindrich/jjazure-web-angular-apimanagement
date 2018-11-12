@@ -67,8 +67,10 @@ namespace jjapisforders.Controllers
                     name = "Admin",
                     address = "address",
                 };
-                //Creating Document - you can obtain id from result
-                var result = await _cosmosDbClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName"), _configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName")), document);
+
+                if(_cosmosDbClient != null)
+                    //Creating Document - you can obtain id from result
+                    await _cosmosDbClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName"), _configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName")), document);
 
                 return content;
             }
