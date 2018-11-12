@@ -127,9 +127,172 @@ If you want to use port sharing, you have to use HttpSys listener - [Using uniqu
 
 Your services will be available on http://jjsf.westeurope.cloudapp.azure.com/jjapisf1/api/books and http://jjsf.westeurope.cloudapp.azure.com/jjapisf2/api/values
 
-How to communicate between services internally in ServiceFabric - [ServiceFabric internal communication](https://dzimchuk.net/implementing-a-rest-client-for-internal-communication-in-service-fabric/)
 
-How to generate proxy for APIs [NSwag](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag)
+
+**How to communicate between services internally in ServiceFabric using REST protocol** - [ServiceFabric internal communication](https://dzimchuk.net/implementing-a-rest-client-for-internal-communication-in-service-fabric/)
+
+When implementing  communication between SF services, there are two basic ways how to achieve it. First way is to use so called Service Remoting offered by fabric SDK. It this case callee service defines communication interface and remoting listener and client service subsequently uses service proxy to call the service. You can find more information on Service Remoting [here](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-remoting).
+
+This approach is not suitable when there is already defined API surface, thru which services provide responses and data to external entities (usually REST). In such case it makes sense to reuse this API surface and use service address resolution capabilities of SF, to obtain private network address of the endpoint which we want to call from client service.  Service Fabric provides you with a higher level communication component called `ServicePartitionClient` which handles endpoint resolution under the hood and gives you two things on top of that, it caches resolved endpoint and implements retry logic for cases when instance of service becomes unavailable (node failure, services reshuffling). Bellow there is stated example of inter service REST communication using `ServicePartitionClient` implemented within `OrdersController Get` method. Refer to **jjsfapi2** sample for more details. Note that retry behavior (max retries count and re-resolution of endpoint) is defined within `HttpExceptionHandler` class 
+
+```c#
+public async Task<ActionResult<string>> Get()
+{
+    try
+    {
+        ServicePartitionResolver resolver = ServicePartitionResolver.GetDefault();
+        ServicePartitionClient<HttpCommunicationClient> partitionClient
+            = new ServicePartitionClient<HttpCommunicationClient>(communicationFactory, serviceUri, new ServicePartitionKey());
+
+        string content = null;
+        await partitionClient.InvokeWithRetryAsync(
+            async (client) =>
+            {
+                var path = _configuration.GetSection("ConnectionStrings").GetValue<string>("BookServicePath");
+                HttpResponseMessage response = await client.HttpClient.GetAsync(new Uri(client.Url + path));
+                content = await response.Content.ReadAsStringAsync();
+            });
+
+        return content;
+    }
+    catch (Exception ex)
+    {
+    }
+
+    return null;
+}
+```
+
+**How to generate proxy for APIs** [NSwag](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag)
+
+**Service Fabric ASP.NET Core service configuration** 
+
+ASP.NET Core and as well Service Fabric ASP.NET Core services allows you to utilize multiple configuration providers, which enables you to load application setting or connection string from multiple sources, e.g. from file, from Azure Key Vault etc. See more details in [official documentation](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.1).
+
+Bellow we are stating code samples demonstrating how to load configuration from appSettings.json file. 
+
+First you need to install `Microsoft.Extensions.Configuration.Json` nuget package providing extensions method, which enables us to read configuration from json file. 
+
+Next we will alter `ConfigureAppConfiguration` within code for creation of service listener (in our case within `jjapisforders class` in jjsfapi2 project). If you would like to create specific configuration per environment, you can use `environment.EnvironmentName` as a prefix for your configuration file. 
+
+```
+protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
+{
+	return new ServiceInstanceListener[]
+	{                
+		new ServiceInstanceListener(serviceContext =>
+			new HttpSysCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
+			{
+				url += "/jjapisf2";
+				ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting HttpSys on {url}");
+
+				return new WebHostBuilder()
+							//.UseKestrel()
+							.UseHttpSys()
+							.ConfigureServices(
+								services => services
+									.AddSingleton<StatelessServiceContext>(serviceContext))
+							.UseContentRoot(Directory.GetCurrentDirectory())
+							.UseStartup<Startup>()
+							.UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
+							.UseUrls(url)
+							.ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
+							{
+								var environment = webHostBuilderContext.HostingEnvironment;
+								configurationbuilder
+										.AddJsonFile("appsettings.json", optional: true)
+										//Adding specific Environment file
+										 .AddJsonFile($"{environment.EnvironmentName}_appsettings.json", optional: true);
+								configurationbuilder.AddEnvironmentVariables();
+							})
+
+							.Build();
+			}))
+	};
+}
+```
+
+Configuration will be automatically added to ASP.NET Core dependency injection container and you can access it within controller thru it's constructor:
+
+```c#
+private IConfiguration _configuration;
+public OrdersController(IConfiguration configuration, DocumentClient client )
+{
+	_configuration = configuration;
+}
+```
+
+You can then read configuration values like this:
+
+```C#
+configuration.GetSection("ConnectionStrings").GetValue<string>("BookServicePath");
+```
+
+**Communicating with Cosmos DB from NET Core Service Fabric service**
+
+To communicate with Cosmos DB we will use Comos DB .NET Core SDK, that is available thru this nuget package `Microsoft.Azure.DocumentDB.Core`.
+
+In jjsfapi2 sample we use Cosmos DB Client, which provides us capabilities to communicate with Cosmos DB. This client object is inserted into Dependency Injection container of our ASP.NET Core service. Bellow we are stating steps needed for proper configuration:
+
+First configure the client within constructor of `Startup` class and create db and collection if they do not exist:
+
+```c#
+public Startup(IConfiguration configuration)
+{
+	Configuration = configuration;
+	var endpointUri = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosEndpointUri");
+	var key = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBKey");
+	var dbName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName");
+	var collectionName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName");
+
+	// Creating a new client instance
+	cosmosDBclient = new DocumentClient(new Uri(endpointUri), key);
+	// Create any database or collection you will work with here.
+	this.cosmosDBclient.CreateDatabaseIfNotExistsAsync(new Database { Id = dbName });
+                         this.cosmosDBclient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(dbName), new DocumentCollection { Id = collectionName });
+}
+```
+
+Now  add client to dependency injection container within `ConfigureServices` method:
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+	services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+    
+    // Add CosmosDB client to Dependency Injection Container
+	services.AddSingleton(cosmosDBclient); 
+	// Register the Swagger services
+	services.AddSwagger();
+}
+```
+
+Access client within controller constructor
+
+```c#
+private static DocumentClient _cosmosDbClient;
+private IConfiguration _configuration;
+
+public OrdersController(IConfiguration configuration, DocumentClient client )
+{
+	_configuration = configuration;
+	_cosmosDbClient = client;
+}
+```
+
+Example of document creation:
+
+```C#
+dynamic document = new
+{
+	name = "Admin",
+	address = "address",
+};
+//Creating Document - you can obtain id from result
+var result = await _cosmosDbClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName"), _configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName")), document);
+```
+
+Refer to [this article](http://www.jamesirl.com/posts/core-cosmosdb) for more information on how to execute CRUD operation using `DocumentClient` object. 
 
 ## Publish API backend with Azure API management
 

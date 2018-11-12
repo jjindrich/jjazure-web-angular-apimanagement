@@ -338,3 +338,4 @@ ASALocalRun/
 .localhistory/
 
 # End of https://www.gitignore.io/api/visualstudio
+appsettings.Development.json
