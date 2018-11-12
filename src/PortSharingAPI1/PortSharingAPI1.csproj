@@ -13,12 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0-preview3-35497" />
-    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Abstractions" Version="3.2.187" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.HttpSys" Version="3.2.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.2.176" />
-    <PackageReference Include="NSwag.AspNetCore" Version="11.20.1" />
+    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.2.187" />
   </ItemGroup>
 
 </Project>

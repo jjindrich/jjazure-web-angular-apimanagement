@@ -11,6 +11,7 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace jjapisforders
 {
@@ -47,6 +48,16 @@ namespace jjapisforders
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
+                                    .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
+                                    {
+                                        var environment = webHostBuilderContext.HostingEnvironment;
+                                        configurationbuilder
+                                                .AddJsonFile("appsettings.json", optional: true)
+                                                //Adding specific Environment file
+                                                 .AddJsonFile($"{environment.EnvironmentName}_appsettings.json", optional: true);
+                                        configurationbuilder.AddEnvironmentVariables();
+                                    })
+
                                     .Build();
                     }))
             };

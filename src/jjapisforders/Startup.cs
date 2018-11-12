@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,9 +18,21 @@ namespace jjapisforders
 {
     public class Startup
     {
+        private DocumentClient cosmosDBclient;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var endpointUri = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosEndpointUri");
+            var key = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBKey");
+            var dbName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName");
+            var collectionName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName");
+
+            // Creating a new client instance
+            cosmosDBclient = new DocumentClient(new Uri(endpointUri), key);
+            // Create any database or collection you will work with here.
+            this.cosmosDBclient.CreateDatabaseIfNotExistsAsync(new Database { Id = dbName });
+            this.cosmosDBclient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(dbName), new DocumentCollection { Id = collectionName });
         }
 
         public IConfiguration Configuration { get; }
@@ -27,7 +41,8 @@ namespace jjapisforders
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            // Add CosmosDB client to Dependency Injection Container
+            services.AddSingleton(cosmosDBclient); 
             // Register the Swagger services
             services.AddSwagger();
         }

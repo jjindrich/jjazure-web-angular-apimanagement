@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace jjapisforders.Controllers
+namespace PortSharingAPI2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

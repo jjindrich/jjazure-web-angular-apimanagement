@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "jjapisf", "jjapisf\jjapisf.sfproj", "{1A8A89E0-39FC-4FF5-A771-D9BA3CD17E09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jjapisfbooks", "jjapisfbooks\jjapisfbooks.csproj", "{50CCCF26-1D86-4763-AE4E-E690C1266AF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jjapisfbooks", "jjapisfbooks\jjapisfbooks.csproj", "{50CCCF26-1D86-4763-AE4E-E690C1266AF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
