@@ -26,7 +26,7 @@ namespace jjapisforders.Controllers
 
         private static readonly HttpCommunicationClientFactory communicationFactory;
 
-        private static DocumentClient _cosmosDbClient;
+        private static CosmosDbClientFactory _clientFactory;
 
 
         static OrdersController()
@@ -37,12 +37,13 @@ namespace jjapisforders.Controllers
         }
 
         private IConfiguration _configuration;
-        public OrdersController(IConfiguration configuration, DocumentClient client )
+        public OrdersController(IConfiguration configuration, CosmosDbClientFactory clientFactory )
         {
-            serviceUri = new Uri(_configuration.GetSection("ConnectionStrings").GetValue<string>("SFAppName") + _configuration.GetSection("ConnectionStrings").GetValue<string>("ServicePath"));
             _configuration = configuration;
-            _cosmosDbClient = client;
+            serviceUri = new Uri(_configuration.GetSection("ConnectionStrings").GetValue<string>("SFAppName") + _configuration.GetSection("ConnectionStrings").GetValue<string>("ServicePath"));
+            _clientFactory = clientFactory;
         }
+ 
         // GET api/values
         [HttpGet]
         public async Task<ActionResult<string>> Get()
@@ -68,19 +69,17 @@ namespace jjapisforders.Controllers
                     address = "address",
                 };
 
-                if(_cosmosDbClient != null)
+                if(_clientFactory.GetDocumentClient() != null)
                     //Creating Document - you can obtain id from result
-                    await _cosmosDbClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName"), _configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName")), document);
+                    await _clientFactory.GetDocumentClient().CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName"), _configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName")), document);
+
 
                 return content;
             }
             catch (Exception ex)
             {
                 // Sample code: print exception
-               
-
             }
-            
             return null;
         }
 

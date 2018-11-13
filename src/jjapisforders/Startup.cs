@@ -18,24 +18,13 @@ namespace jjapisforders
 {
     public class Startup
     {
-        private DocumentClient cosmosDBclient = null;
+
+        private CosmosDbClientFactory cosmosDBClientFactory;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            var endpointUri = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosEndpointUri");
-            var key = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBKey");
-            var dbName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosDBName");
-            var collectionName = configuration.GetSection("ConnectionStrings").GetValue<string>("CosmosCollectionName");
-
-            if (endpointUri != "" || endpointUri != null)
-            {
-                // Creating a new client instance
-                cosmosDBclient = new DocumentClient(new Uri(endpointUri), key);
-                // Create any database or collection you will work with here.
-                this.cosmosDBclient.CreateDatabaseIfNotExistsAsync(new Database { Id = dbName });
-                this.cosmosDBclient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(dbName), new DocumentCollection { Id = collectionName });
-            }
+            cosmosDBClientFactory = new CosmosDbClientFactory(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -44,8 +33,8 @@ namespace jjapisforders
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            // Add CosmosDB client to Dependency Injection Container
-            services.AddSingleton(cosmosDBclient); 
+            // Add CosmosDB client factory to Dependency Injection Container, using factory, to achieve that client can be only optional in case connection string is provided in App Settings
+            services.AddSingleton<CosmosDbClientFactory>(cosmosDBClientFactory); 
             // Register the Swagger services
             services.AddSwagger();
         }
