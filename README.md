@@ -294,6 +294,47 @@ var result = await _cosmosDbClient.CreateDocumentAsync(UriFactory.CreateDocument
 
 Refer to [this article](http://www.jamesirl.com/posts/core-cosmosdb) for more information on how to execute CRUD operation using `DocumentClient` object. 
 
+### Create API project with Visual Studio hosted as Docker in Azure ServiceFabric Mesh
+
+This is sample using new Azure Mesh service in Preview. It's not recommended to use in production.
+
+What is it - [ServiceFabric Mesh](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-overview)
+Install SDK - [ServiceFabric Mesh SDK](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-howto-setup-developer-environment-sdk)
+
+You can use new Visual Studio project to create API App using ServiceFabric Mesh - [Tutorial](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-tutorial-create-dotnetcore). It creates new dotnet core project based on selected template and add docker support (now only Windows docker if debugging is needed).
+
+**Prepare Azure Container Registry**
+
+```bash
+az acr repository list --name jjapicr --output table
+az acr credential show --name jjapicr --query username
+az acr credential show --name jjapicr --query "passwords[0].value"
+```
+
+**Push docker image into Azure Container Registry**
+
+- add Docker support into API webapp project in Visual Studio (jjapi)
+- publish Docker image into Azure Container Registry (jjapicr)
+- you will find container jjapicr.azurecr.io/jjapi
+
+Check api is running on http://localhost/api/books
+
+```bash
+docker run -it -p 80:80 jjapi
+```
+
+**Deploy Mesh**
+
+[Template tutorial](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-tutorial-template-deploy-app)
+
+Deploy template and get url http://<your_ip>/api/books
+
+```bash
+az extension add --name mesh
+az mesh deployment create --resource-group <rg> --template-file deploy-mesh.json --parameters deploy-mesh.params.json
+az mesh network show --resource-group <rg> --name JJMeshAppNetwork
+```
+
 ## Publish API backend with Azure API management
 
 Provision Azure API Management, my is jjapi

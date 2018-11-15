@@ -1,0 +1,100 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "registryPassword": {
+            "defaultValue": "",
+            "type": "SecureString",
+            "metadata": {
+                "description": "Password for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"passwords[0].value\"' will show the password."
+            }
+        },
+        "registryUserName": {
+            "defaultValue": "",
+            "type": "string",
+            "metadata": {
+                "description": "User name for the private image registry server. For Azure Container Registry the CLI command 'az acr credential show --name <myacr> --query \"username\"' will show the username."
+            }
+        },
+        "registryServer": {
+            "defaultValue": "",
+            "type": "string",
+            "metadata": {
+                "description": "Private image registry server. For example, '<myacr>.azurecr.io'"
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-07-01-preview",
+            "name": "jjsfapp",
+            "type": "Microsoft.ServiceFabricMesh/applications",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "Microsoft.ServiceFabricMesh/networks/jjnet"
+            ],
+            "properties": {
+                "services": [
+                    {
+                        "name": "jjapi",
+                        "properties": {
+                            "osType": "Linux",
+                            "codePackages": [
+                                {
+                                    "name": "jjapi",
+                                    "image": "jjapicr.azurecr.io/jjapi:latest",
+                                    "volumeRefs": [],
+                                    "endpoints": [
+                                        {
+                                            "name": "jjapilistener",
+                                            "port": 80
+                                        }
+                                    ],
+                                    "resources": {
+                                        "requests": {
+                                            "cpu": "2",
+                                            "memoryInGB": "2.5"
+                                        }
+                                    },
+                                    "imageRegistryCredential": {
+                                        "server": "[parameters('registryServer')]",
+                                        "username": "[parameters('registryUserName')]",
+                                        "password": "[parameters('registryPassword')]"
+                                    }
+                                }
+                            ],
+                            "replicaCount": "1",
+                            "networkRefs": [
+                                {
+                                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'jjnet')]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "description": "Application description."
+            }
+        },
+        {
+            "apiVersion": "2018-07-01-preview",
+            "name": "jjnet",
+            "type": "Microsoft.ServiceFabricMesh/networks",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "addressPrefix": "10.0.0.4/22",
+                "ingressConfig": {
+                    "layer4": [
+                        {
+                            "name": "ServiceAIngress",
+                            "publicPort": "80",
+                            "applicationName": "jjapp",
+                            "serviceName": "jjapi",
+                            "endpointName": "jjapilistener"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
