@@ -19,10 +19,6 @@ SinglePage Angular web application calling back-end rest API published with API 
 
 *If you will not use API management, you have to implement security checks on your API services directly.*
 
-**TODO: Next steps**:
-
-- Host API in Docker using Azure Mesh
-
 ## Create frontend web
 
 ### Create Angular project with Visual Studio Code
@@ -323,7 +319,7 @@ Check api is running on http://localhost/api/books
 docker run -it -p 80:80 jjapi
 ```
 
-**Deploy Mesh**
+**Deploy Azure ServiceFabric Mesh**
 
 [Template tutorial](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-tutorial-template-deploy-app)
 
@@ -331,8 +327,13 @@ Deploy template and get url http://<your_ip>/api/books
 
 ```bash
 az extension add --name mesh
-az mesh deployment create --resource-group <rg> --template-file deploy-mesh.json --parameters deploy-mesh.params.json
-az mesh network show --resource-group <rg> --name JJMeshAppNetwork
+rg=<rg>
+az group create -n $rg -l westeurope
+az mesh deployment create --resource-group $rg --template-file deploy-mesh.json --parameters @deploy-mesh.params.json
+
+az mesh network show --resource-group $rg --name jjnet
+az mesh app show --resource-group  $rg --name jjsfapp
+az mesh code-package-log get --resource-group $rg --application-name jjsfapp --service-name jjapi --replica-name 0 --code-package-name jjapi
 ```
 
 ## Publish API backend with Azure API management

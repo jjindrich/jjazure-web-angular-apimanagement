@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "registryPassword": {
-            "value": "<PASS>"
+            "value": "<PASSWORD>"
         },
         "registryUserName": {
-            "value": "jjapi"
+            "value": "jjapicr"
         },
         "registryServer": {
             "value": "jjapicr.azurecr.io"

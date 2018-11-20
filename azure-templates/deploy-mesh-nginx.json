@@ -1,0 +1,78 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "test": {
+            "defaultValue": "",
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-07-01-preview",
+            "name": "jjsfapp",
+            "type": "Microsoft.ServiceFabricMesh/applications",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "Microsoft.ServiceFabricMesh/networks/jjnet"
+            ],
+            "properties": {
+                "services": [
+                    {
+                        "name": "jjapi",
+                        "properties": {
+                            "osType": "Linux",
+                            "codePackages": [
+                                {
+                                    "name": "jjapi",
+                                    "image": "nginx:latest",
+                                    "volumeRefs": [],
+                                    "endpoints": [
+                                        {
+                                            "name": "jjapilistener",
+                                            "port": 80
+                                        }
+                                    ],
+                                    "resources": {
+                                        "requests": {
+                                            "cpu": "2",
+                                            "memoryInGB": "2.5"
+                                        }
+                                    }
+                                }
+                            ],
+                            "replicaCount": "1",
+                            "networkRefs": [
+                                {
+                                    "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'jjnet')]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "description": "Application description."
+            }
+        },
+        {
+            "apiVersion": "2018-07-01-preview",
+            "name": "jjnet",
+            "type": "Microsoft.ServiceFabricMesh/networks",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "addressPrefix": "10.0.0.4/22",
+                "ingressConfig": {
+                    "layer4": [
+                        {
+                            "name": "ServiceAIngress",
+                            "publicPort": "80",
+                            "applicationName": "jjapp",
+                            "serviceName": "jjapi",
+                            "endpointName": "jjapilistener"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

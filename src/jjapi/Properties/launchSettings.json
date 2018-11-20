@@ -20,7 +20,7 @@
     "jjapi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/books",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
