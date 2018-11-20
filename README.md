@@ -336,6 +336,29 @@ az mesh app show --resource-group  $rg --name jjsfapp
 az mesh code-package-log get --resource-group $rg --application-name jjsfapp --service-name jjapi --replica-name 0 --code-package-name jjapi
 ```
 
+**Cool**: Because it's ARM template, you can use default deployment command
+
+```bash
+az group deployment create --resource-group $rg --template-file deploy-mesh.json --parameters @deploy-mesh.params.json
+```
+
+If you want to change internal port of endpoint, change template to:
+
+```json
+                                    "endpoints": [
+                                        {
+                                            "name": "jjapilistener",
+                                            "port": 8080
+                                        }
+                                    ],
+                                    "environmentVariables": [
+                                        {
+                                            "name": "ASPNETCORE_URLS",
+                                            "value": "http://+:8080"
+                                        }
+                                    ]
+```
+
 ## Publish API backend with Azure API management
 
 Provision Azure API Management, my is jjapi
