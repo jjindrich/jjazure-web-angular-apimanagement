@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "apiServiceName": {
+            "type": "string"
+        },
+        "apiName": {
+            "type": "string"
+        },
+        "apiUrlSuffix": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2018-01-01",
+            "type": "Microsoft.ApiManagement/service/apis",
+            "name": "[concat(parameters('apiServiceName'), '/', parameters('apiName'))]",            
+            "properties": {
+                "displayName": "[parameters('apiName')]",
+                "apiRevision": "1",
+                "contentFormat": "swagger-link-json",
+                "contentValue": "https://jjapiapp.azurewebsites.net/swagger/v1/swagger.json",
+                "path": "[parameters('apiUrlSuffix')]",
+                "protocols": [
+                    "https"
+                ]
+            }
+        }
+    ]
+}

@@ -475,6 +475,19 @@ Warning: Trace is not working if Header is missing **Ocp-Apim-Subscription-Key**
 
 [Version API](https://docs.microsoft.com/en-us/azure/api-management/api-management-get-started-publish-versions)
 
+### API management scripting
+
+How to update API Management with new API versions etc.
+
+There are templates
+
+- template for API definition (deploy-apim.json)
+- template for specific API (deploy-apim-api-boos.json)
+
+```bash
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books.json --parameters @deploy-apim-api-books.params.json
+```
+
 ## Communication with database
 
 Connection resiliency for Entity Framework core: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
