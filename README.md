@@ -482,10 +482,20 @@ How to update API Management with new API versions etc.
 There are templates
 
 - template for API definition (deploy-apim.json)
-- template for specific API (deploy-apim-api-boos.json)
+- template for specific API (deploy-apim-api-books.json)
 
 ```bash
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books.json --parameters @deploy-apim-api-books.params.json
+```
+
+If you need to script API versioning referencing Swagger definition, you have to make it in two steps
+
+- deploy Api-version-set with clean API
+- update API with Swagger definition
+
+```bash
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step1.json --parameters @deploy-apim-api-books-v1.params.json
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step2.json --parameters @deploy-apim-api-books-v1.params.json
 ```
 
 ## Communication with database
