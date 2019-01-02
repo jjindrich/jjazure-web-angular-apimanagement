@@ -359,6 +359,12 @@ If you want to change internal port of endpoint, change template to:
                                     ]
 ```
 
+If you want to publish with **Gateway**, add resource Microsoft.ServiceFabricMesh/gateways - check [link](https://docs.microsoft.com/en-us/azure/service-fabric-mesh/service-fabric-mesh-howto-configure-gateways)
+
+- using Envoy proxy internally
+- supports L4 and L7 routing
+- Check my template deploy-mesh-nginx.json and check public IP address and run browser http://<your-ip>/web
+
 ## Publish API backend with Azure API management
 
 Provision Azure API Management, my is jjapi
