@@ -504,6 +504,20 @@ az group deployment create --resource-group $rg --template-file deploy-apim-api-
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step2.json --parameters @deploy-apim-api-books-v1.params.json
 ```
 
+If you need to release revision as current, you have to create Release resource
+
+```json
+        {
+            "apiVersion": "2018-01-01",
+            "type": "Microsoft.ApiManagement/service/apis/releases",
+            "name": "[concat(parameters('apiServiceName'), '/', parameters('apiName'),'/rel1')]",
+            "properties":{
+                "apiId" : "/apis/BooksTest;rev=2",
+                "notes" : "Let's release it"
+            }
+        }
+```
+
 ## Communication with database
 
 Connection resiliency for Entity Framework core: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
