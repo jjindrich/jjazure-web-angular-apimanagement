@@ -504,7 +504,7 @@ az group deployment create --resource-group $rg --template-file deploy-apim-api-
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step2.json --parameters @deploy-apim-api-books-v1.params.json
 ```
 
-If you need to release revision as current, you have to create Release resource
+If you need to release revision as current, you have to create Release resource. Or you can [call API](https://blogs.msdn.microsoft.com/apimanagement/2017/09/29/managing-versions-and-revisions-using-the-http-api/) 
 
 ```json
         {
