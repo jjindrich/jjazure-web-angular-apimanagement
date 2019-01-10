@@ -494,28 +494,27 @@ There are templates
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books.json --parameters @deploy-apim-api-books.params.json
 ```
 
-If you need to script API versioning referencing Swagger definition, you have to make it in two steps
+If you need to script API versioning referencing Swagger definition, you have to make it in following steps
 
-- deploy Api-version-set with clean API
-- update API with Swagger definition
+- deploy Api-version-set with clean API (-step1)
+- update API with Swagger definition (-step2)
+- add revision (rev=2) (-step3)
+- update API with Swagger definition for revision (rev=2) (-step4)
+- switch revision (rev=2) as primary (-step5)
+
+Create new API
 
 ```bash
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step1.json --parameters @deploy-apim-api-books-v1.params.json
 az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step2.json --parameters @deploy-apim-api-books-v1.params.json
 ```
 
-If you need to release revision as current, you have to create Release resource. Or you can [call API](https://blogs.msdn.microsoft.com/apimanagement/2017/09/29/managing-versions-and-revisions-using-the-http-api/) 
+Add revision and switch to primary
 
-```json
-        {
-            "apiVersion": "2018-01-01",
-            "type": "Microsoft.ApiManagement/service/apis/releases",
-            "name": "[concat(parameters('apiServiceName'), '/', parameters('apiName'),'/rel1')]",
-            "properties":{
-                "apiId" : "/apis/BooksTest;rev=2",
-                "notes" : "Let's release it"
-            }
-        }
+```bash
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step3.json --parameters @deploy-apim-api-books-v1.params.json
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step4.json --parameters @deploy-apim-api-books-v1.params.json
+az group deployment create --resource-group $rg --template-file deploy-apim-api-books-v1-step5.json --parameters @deploy-apim-api-books-v1.params.json
 ```
 
 ## Communication with database

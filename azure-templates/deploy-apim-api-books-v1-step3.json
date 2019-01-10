@@ -37,15 +37,16 @@
         {
             "apiVersion": "2018-01-01",
             "type": "Microsoft.ApiManagement/service/apis",
-            "name": "[concat(parameters('apiServiceName'), '/', parameters('apiName'))]",
+            "name": "[concat(parameters('apiServiceName'), '/', parameters('apiName'), ';rev=2')]",
             "properties": {
                 "displayName": "[parameters('apiName')]",
-                "apiRevision": "1",
+                "apiRevision": "2",
                 "apiVersion": "v1",
                 "apiVersionSetId": "[resourceId('Microsoft.ApiManagement/service/api-version-sets', parameters('apiServiceName'), parameters('versionSetName'))]",
-                "contentFormat": "swagger-link-json",
-                "contentValue": "https://jjapiapp.azurewebsites.net/swagger/v1/swagger.json",
-                "path": "[parameters('apiUrlSuffix')]"
+                "path": "[parameters('apiUrlSuffix')]",
+                "protocols": [
+                    "https"
+                ]
             },
             "dependsOn": [
                 "[resourceId('Microsoft.ApiManagement/service/api-version-sets', parameters('apiServiceName'), parameters('versionSetName'))]"
